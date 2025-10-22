@@ -4,16 +4,13 @@ import com.example.brewer.model.Cerveja;
 import com.example.brewer.service.CervejaService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.ui.Model;
 
 
 @Controller
 @RequiredArgsConstructor
-@RequestMapping("brewer")
+@RequestMapping("/brewer")
 public class CervejaController {
     private final CervejaService cervejaService;
     
@@ -25,9 +22,15 @@ public class CervejaController {
 
     @GetMapping("/listar")
     public String listarCervejas(Model model){
-        model.addAttribute("brewer",cervejaService.listarCervejas());
+        model.addAttribute("cervejas",cervejaService.listarCervejas());
         model.addAttribute("novaCerveja", new Cerveja());
         return "adicionar-cerveja";
+    }
+
+    @PostMapping
+    public String deletarCerveja(@PathVariable Long id){
+        cervejaService.deletarCerveja(id);
+        return "redirect:/brewer/listar";
     }
 
 

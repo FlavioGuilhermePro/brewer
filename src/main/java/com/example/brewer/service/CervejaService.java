@@ -20,4 +20,8 @@ public class CervejaService {
         return cervejaRepository.findAll();
     }
 
+    public void deletarCerveja(Long id){
+        cervejaRepository.deleteById(id);
+    }
+
 }
