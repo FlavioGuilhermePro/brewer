@@ -1,1 +1,58 @@
-++++
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Criar cerveja</title>
+</head>
+<body>
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"> <head>
+    <meta charset="UTF-8">
+    <title>Estoque Brewer</title>
+</head>
+<body>
+<h2>Adicionar Cerveja</h2>
+<form th:action="@{/brewer/adicionarcerveja}" th:object="${novaCerveja}" method="post">
+
+    <input type="text" th:field="*{sku}" placeholder="Adicionar o SKU">
+    <input type="text" th:field="*{nome}" placeholder="Nome da cerveja">
+    <input type="number" th:field="*{quantidadeEstoque}" placeholder="Quantidade">
+    <input type="number" step="0.01" th:field="*{valorVenda}" placeholder="Valor (R$)">
+
+    <button type="submit">Adicionar Cerveja</button>
+</form>
+
+<hr> <h2>Estoque</h2>
+<table>
+    <thead border="1">
+    <tr>
+        <th>SKU</th>
+        <th>Nome</th>
+        <th>Volume</th>
+        <th>Quantidade</th>
+        <th>Valor Venda</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="cerveja : ${cervejas}">
+        <td th:text="${cerveja.sku}"></td>
+        <td th:text="${cerveja.nome}"></td>
+        <td th:text="${cerveja.volume}"></td>
+        <td th:text="${cerveja.quantidadeEstoque}"></td>
+        <td th:text="${cerveja.valorVenda}"></td>
+        <td>
+            <form th:action="@{/brewer/listar/deletar/{id}(id=${cerveja.id})}"
+                  method="post"
+                  style="display:inline;">
+                <button type="submit" onclick="return confirm('Tem certeza que deseja deletar este produto?')">
+                    Deletar
+                </button>
+            </form>
+        </td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>
+</body>
+</html>

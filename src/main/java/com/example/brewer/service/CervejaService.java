@@ -24,4 +24,9 @@ public class CervejaService {
         cervejaRepository.deleteById(id);
     }
 
+    public Cerveja buscarPorId(Long id){
+        return cervejaRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Produto não encontrado"));
+    }
+
 }

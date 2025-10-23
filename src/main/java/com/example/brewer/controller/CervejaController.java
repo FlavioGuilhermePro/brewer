@@ -27,7 +27,7 @@ public class CervejaController {
         return "adicionar-cerveja";
     }
 
-    @PostMapping
+    @PostMapping("/listar/deletar/{id}")
     public String deletarCerveja(@PathVariable Long id){
         cervejaService.deletarCerveja(id);
         return "redirect:/brewer/listar";
