@@ -41,6 +41,9 @@
         <td th:text="${cerveja.quantidadeEstoque}"></td>
         <td th:text="${cerveja.valorVenda}"></td>
         <td>
+            <a th:href="@{/brewer/editar/{id}(id=${cerveja.id})}">
+                <button type="button">Editar</button>
+            </a>
             <form th:action="@{/brewer/listar/deletar/{id}(id=${cerveja.id})}"
                   method="post"
                   style="display:inline;">

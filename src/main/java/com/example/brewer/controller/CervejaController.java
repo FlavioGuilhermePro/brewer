@@ -7,6 +7,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.ui.Model;
 
+import java.nio.file.Path;
+
 
 @Controller
 @RequiredArgsConstructor
@@ -30,6 +32,19 @@ public class CervejaController {
     @PostMapping("/listar/deletar/{id}")
     public String deletarCerveja(@PathVariable Long id){
         cervejaService.deletarCerveja(id);
+        return "redirect:/brewer/listar";
+    }
+
+    @GetMapping("/editar/{id}")
+    public String editarCerveja(@PathVariable Long id, Model model){
+        Cerveja cerveja = cervejaService.buscarPorId(id);
+        model.addAttribute("cerveja",cerveja);
+        return "editar-cerveja";
+    }
+
+    @PostMapping("/atualizar")
+    public String atualizarCerveja(@ModelAttribute Cerveja cerveja){
+        cervejaService.atualizarCerveja(cerveja);
         return "redirect:/brewer/listar";
     }
 

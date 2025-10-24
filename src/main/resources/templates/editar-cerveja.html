@@ -1,10 +1,35 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
     <title>Editar Cerveja</title>
 </head>
 <body>
+<h2>Editar Cerveja</h2>
 
+<form th:action="@{/brewer/atualizar}" th:object="${cerveja}" method="post">
+
+    <input type="hidden" th:field="*{id}">
+
+    <label>SKU:</label><br>
+    <input type="text" th:field="*{sku}" required><br><br>
+
+    <label>Nome:</label><br>
+    <input type="text" th:field="*{nome}" required><br><br>
+
+    <label>Volume:</label><br>
+    <input type="number" step="0.01" th:field="*{volume}" required><br><br>
+
+    <label>Quantidade:</label><br>
+    <input type="number" th:field="*{quantidadeEstoque}" required><br><br>
+
+    <label>Valor Venda (R$):</label><br>
+    <input type="number" step="0.01" th:field="*{valorVenda}" required><br><br>
+
+    <button type="submit">Salvar Alterações</button>
+    <a th:href="@{/brewer/listar}">
+        <button type="button">Cancelar</button>
+    </a>
+</form>
 </body>
 </html>

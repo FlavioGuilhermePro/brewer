@@ -29,4 +29,8 @@ public class CervejaService {
                 .orElseThrow(() -> new RuntimeException("Produto não encontrado"));
     }
 
+    public void atualizarCerveja (Cerveja cerveja){
+        cervejaRepository.save(cerveja);
+    }
+
 }
