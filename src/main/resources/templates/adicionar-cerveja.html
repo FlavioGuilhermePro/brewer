@@ -12,15 +12,41 @@
 </head>
 <body>
 <h2>Adicionar Cerveja</h2>
-<form th:action="@{/brewer/adicionarcerveja}" th:object="${novaCerveja}" method="post">
+    <form th:action="@{/brewer/adicionarcerveja}" th:object="${novaCerveja}" method="post" >
 
-    <input type="text" th:field="*{sku}" placeholder="Adicionar o SKU">
-    <input type="text" th:field="*{nome}" placeholder="Nome da cerveja">
-    <input type="number" th:field="*{quantidadeEstoque}" placeholder="Quantidade">
-    <input type="number" step="0.01" th:field="*{valorVenda}" placeholder="Valor (R$)">
+        <div>
+            <label>Nome da Cerveja:</label>
+            <input type="text" th:field="*{nome}" placeholder="Nome da cerveja">
+            <span th:if="${#fields.hasErrors('nome')}" th:errors="*{nome}" style="color: red;"></span>
+        </div>
 
-    <button type="submit">Adicionar Cerveja</button>
-</form>
+        <div>
+            <label>SKU:</label>
+            <input type="text" th:field="*{sku}" placeholder="Adicionar o SKU">
+            <span th:if="${#fields.hasErrors('sku')}" th:errors="*{sku}" style="color: red;"></span>
+        </div>
+
+        <div>
+            <label>Quantidade:</label>
+            <input type="number" th:field="*{quantidadeEstoque}" placeholder="Quantidade">
+            <span th:if="${#fields.hasErrors('quantidadeEstoque')}" th:errors="*{quantidadeEstoque}" style="color: red;"></span>
+        </div>
+
+        <div>
+            <label>Valor (R$):</label>
+            <input type="number" step="0.01" th:field="*{valorVenda}" placeholder="Valor (R$)">
+            <span th:if="${#fields.hasErrors('valorVenda')}" th:errors="*{valorVenda}" style="color: red;"></span>
+        </div>
+
+        <button type="submit">Adicionar Cerveja</button>
+    </form>
+    <h2>Buscar Cerveja</h2>
+    <form th:action="@{/brewer/listar}" method="get">
+        <input type="text" name="nome" placeholder="Buscar por Nome da Cerveja">
+        <button type="submit">Buscar</button>
+    </form>
+
+<hr>
 
 <hr> <h2>Estoque</h2>
 <table>
@@ -34,7 +60,7 @@
     </tr>
     </thead>
     <tbody>
-    <tr th:each="cerveja : ${cervejas}">
+    <tr th:each="cerveja : ${pagina.content}">
         <td th:text="${cerveja.sku}"></td>
         <td th:text="${cerveja.nome}"></td>
         <td th:text="${cerveja.volume}"></td>
@@ -55,6 +81,21 @@
     </tr>
     </tbody>
 </table>
+<div th:if="${pagina.totalPages > 0}">
+
+    <a th:href="@{/brewer/listar(page=${pagina.number - 1}, nome=${nomeBusca})}"
+       th:if="${pagina.hasPrevious}">
+        <button type="button">Anterior</button>
+    </a>
+
+    <span th:text="${pagina.number + 1}">1</span> /
+    <span th:text="${pagina.totalPages}">10</span>
+
+    <a th:href="@{/brewer/listar(page=${pagina.number + 1}, nome=${nomeBusca})}"
+       th:if="${pagina.hasNext}">
+        <button type="button">Próximo</button>
+    </a>
+</div>
 </body>
 </html>
 </body>

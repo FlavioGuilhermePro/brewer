@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Editar Cerveja</title>
@@ -11,20 +11,40 @@
 
     <input type="hidden" th:field="*{id}">
 
-    <label>SKU:</label><br>
-    <input type="text" th:field="*{sku}" required><br><br>
+    <div>
+        <label>SKU:</label><br>
+        <input type="text" th:field="*{sku}" required><br>
+        <span th:if="${#fields.hasErrors('sku')}" th:errors="*{sku}" style="color: red;"></span>
+    </div>
+    <br>
 
-    <label>Nome:</label><br>
-    <input type="text" th:field="*{nome}" required><br><br>
+    <div>
+        <label>Nome:</label><br>
+        <input type="text" th:field="*{nome}" required><br>
+        <span th:if="${#fields.hasErrors('nome')}" th:errors="*{nome}" style="color: red;"></span>
+    </div>
+    <br>
 
-    <label>Volume:</label><br>
-    <input type="number" step="0.01" th:field="*{volume}" required><br><br>
+    <div>
+        <label>Volume:</label><br>
+        <input type="number" step="0.01" th:field="*{volume}"><br>
+        <span th:if="${#fields.hasErrors('volume')}" th:errors="*{volume}" style="color: red;"></span>
+    </div>
+    <br>
 
-    <label>Quantidade:</label><br>
-    <input type="number" th:field="*{quantidadeEstoque}" required><br><br>
+    <div>
+        <label>Quantidade:</label><br>
+        <input type="number" th:field="*{quantidadeEstoque}"><br>
+        <span th:if="${#fields.hasErrors('quantidadeEstoque')}" th:errors="*{quantidadeEstoque}" style="color: red;"></span>
+    </div>
+    <br>
 
-    <label>Valor Venda (R$):</label><br>
-    <input type="number" step="0.01" th:field="*{valorVenda}" required><br><br>
+    <div>
+        <label>Valor Venda (R$):</label><br>
+        <input type="number" step="0.01" th:field="*{valorVenda}"><br>
+        <span th:if="${#fields.hasErrors('valorVenda')}" th:errors="*{valorVenda}" style="color: red;"></span>
+    </div>
+    <br>
 
     <button type="submit">Salvar Alterações</button>
     <a th:href="@{/brewer/listar}">
@@ -32,4 +52,5 @@
     </a>
 </form>
 </body>
+</html>
 </html>
