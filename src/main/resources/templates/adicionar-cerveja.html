@@ -1,102 +1,138 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Criar cerveja</title>
+    <title>Estoque Brewer - Adicionar Cerveja</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" th:href="@{/style.css}">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+    <script th:src="@{/script.js}"></script>
 </head>
 <body>
-<!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org"> <head>
-    <meta charset="UTF-8">
-    <title>Estoque Brewer</title>
-</head>
-<body>
-<h2>Adicionar Cerveja</h2>
-    <form th:action="@{/brewer/adicionarcerveja}" th:object="${novaCerveja}" method="post" >
 
-        <div>
-            <label>Nome da Cerveja:</label>
-            <input type="text" th:field="*{nome}" placeholder="Nome da cerveja">
-            <span th:if="${#fields.hasErrors('nome')}" th:errors="*{nome}" style="color: red;"></span>
+<nav class="topbar">
+    <a th:href="@{/brewer/listar}" class="topbar-logo">Brewer Admin</a>
+    <div class="topbar-user">
+        <span>Administrador</span>
+        <a th:href="@{/logout}" title="Sair"><i class="fas fa-sign-out-alt"></i> Sair</a>
+    </div>
+</nav>
+
+<div class="layout-container">
+
+    <aside class="sidebar">
+        <nav class="sidebar-nav">
+            <ul>
+                <li><a th:href="@{/brewer/listar}" class="active">Estoque de Cervejas</a></li>
+                <li><a href="#">Cadastro de Clientes</a></li>
+                <li><a href="#">Relatórios</a></li>
+            </ul>
+        </nav>
+    </aside>
+
+    <main class="content-area">
+
+        <div class="page-header">
+            <h1>Adicionar Cerveja</h1>
         </div>
 
-        <div>
-            <label>SKU:</label>
-            <input type="text" th:field="*{sku}" placeholder="Adicionar o SKU">
-            <span th:if="${#fields.hasErrors('sku')}" th:errors="*{sku}" style="color: red;"></span>
-        </div>
+        <div class="card form-card">
+            <h2>Dados da Cerveja</h2>
+            <form th:action="@{/brewer/adicionarcerveja}" th:object="${novaCerveja}" method="post" >
 
-        <div>
-            <label>Quantidade:</label>
-            <input type="number" th:field="*{quantidadeEstoque}" placeholder="Quantidade">
-            <span th:if="${#fields.hasErrors('quantidadeEstoque')}" th:errors="*{quantidadeEstoque}" style="color: red;"></span>
-        </div>
+                <div class="form-group">
+                    <label>Nome da Cerveja:</label>
+                    <input type="text" th:field="*{nome}" placeholder="Nome da cerveja">
+                    <span th:if="${#fields.hasErrors('nome')}" th:errors="*{nome}" class="error-message"></span>
+                </div>
 
-        <div>
-            <label>Valor (R$):</label>
-            <input type="number" step="0.01" th:field="*{valorVenda}" placeholder="Valor (R$)">
-            <span th:if="${#fields.hasErrors('valorVenda')}" th:errors="*{valorVenda}" style="color: red;"></span>
-        </div>
+                <div class="form-group">
+                    <label>SKU:</label>
+                    <input type="text" th:field="*{sku}" placeholder="Adicionar o SKU">
+                    <span th:if="${#fields.hasErrors('sku')}" th:errors="*{sku}" class="error-message"></span>
+                </div>
 
-        <button type="submit">Adicionar Cerveja</button>
-    </form>
-    <h2>Buscar Cerveja</h2>
-    <form th:action="@{/brewer/listar}" method="get">
-        <input type="text" name="nome" placeholder="Buscar por Nome da Cerveja">
-        <button type="submit">Buscar</button>
-    </form>
+                <div class="form-group">
+                    <label>Quantidade:</label>
+                    <input type="number" th:field="*{quantidadeEstoque}" placeholder="Quantidade">
+                    <span th:if="${#fields.hasErrors('quantidadeEstoque')}" th:errors="*{quantidadeEstoque}" class="error-message"></span>
+                </div>
 
-<hr>
+                <div class="form-group">
+                    <label>Valor (R$):</label>
+                    <input type="number" step="0.01" th:field="*{valorVenda}" placeholder="Valor (R$)">
+                    <span th:if="${#fields.hasErrors('valorVenda')}" th:errors="*{valorVenda}" class="error-message"></span>
+                </div>
 
-<hr> <h2>Estoque</h2>
-<table>
-    <thead border="1">
-    <tr>
-        <th>SKU</th>
-        <th>Nome</th>
-        <th>Volume</th>
-        <th>Quantidade</th>
-        <th>Valor Venda</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr th:each="cerveja : ${pagina.content}">
-        <td th:text="${cerveja.sku}"></td>
-        <td th:text="${cerveja.nome}"></td>
-        <td th:text="${cerveja.volume}"></td>
-        <td th:text="${cerveja.quantidadeEstoque}"></td>
-        <td th:text="${cerveja.valorVenda}"></td>
-        <td>
-            <a th:href="@{/brewer/editar/{id}(id=${cerveja.id})}">
-                <button type="button">Editar</button>
-            </a>
-            <form th:action="@{/brewer/listar/deletar/{id}(id=${cerveja.id})}"
-                  method="post"
-                  style="display:inline;">
-                <button type="submit" onclick="return confirm('Tem certeza que deseja deletar este produto?')">
-                    Deletar
-                </button>
+                <button type="submit" class="btn-primary">Adicionar Cerveja</button>
             </form>
-        </td>
-    </tr>
-    </tbody>
-</table>
-<div th:if="${pagina.totalPages > 0}">
+        </div>
 
-    <a th:href="@{/brewer/listar(page=${pagina.number - 1}, nome=${nomeBusca})}"
-       th:if="${pagina.hasPrevious}">
-        <button type="button">Anterior</button>
-    </a>
+        <hr>
 
-    <span th:text="${pagina.number + 1}">1</span> /
-    <span th:text="${pagina.totalPages}">10</span>
+        <div class="card filter-card">
+            <h2>Buscar Cerveja</h2>
+            <form th:action="@{/brewer/listar}" method="get">
+                <input type="text" name="nome" placeholder="Buscar por Nome da Cerveja">
+                <button type="submit" class="btn-secondary">Buscar</button>
+            </form>
+        </div>
 
-    <a th:href="@{/brewer/listar(page=${pagina.number + 1}, nome=${nomeBusca})}"
-       th:if="${pagina.hasNext}">
-        <button type="button">Próximo</button>
-    </a>
+        <div class="card table-card">
+            <h2>Estoque Atual</h2>
+            <table>
+                <thead border="1">
+                <tr>
+                    <th>SKU</th>
+                    <th>Nome</th>
+                    <th>Volume</th>
+                    <th>Quantidade</th>
+                    <th>Valor Venda</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="cerveja : ${pagina.content}">
+                    <td th:text="${cerveja.sku}"></td>
+                    <td th:text="${cerveja.nome}"></td>
+                    <td th:text="${cerveja.volume}"></td>
+                    <td th:text="${cerveja.quantidadeEstoque}"></td>
+                    <td th:text="${cerveja.valorVenda}"></td>
+                    <td>
+                        <a th:href="@{/brewer/editar/{id}(id=${cerveja.id})}">
+                            <button type="button" class="btn-secondary">Editar</button>
+                        </a>
+                        <form th:action="@{/brewer/listar/deletar/{id}(id=${cerveja.id})}"
+                              method="post"
+                              style="display:inline;">
+                            <button type="submit" class="js-delete-btn btn-delete">
+                                Deletar
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+
+            <div class="pagination-controls" th:if="${pagina.totalPages > 0}">
+                <a th:href="@{/brewer/listar(page=${pagina.number - 1}, nome=${nomeBusca})}"
+                   th:if="${pagina.hasPrevious}">
+                    <button type="button" class="btn-secondary">Anterior</button>
+                </a>
+
+                <span>Página <span th:text="${pagina.number + 1}">1</span> /
+                    <span th:text="${pagina.totalPages}">10</span></span>
+
+                <a th:href="@{/brewer/listar(page=${pagina.number + 1}, nome=${nomeBusca})}"
+                   th:if="${pagina.hasNext}">
+                    <button type="button" class="btn-secondary">Próximo</button>
+                </a>
+            </div>
+        </div>
+
+    </main>
 </div>
-</body>
-</html>
 </body>
 </html>
