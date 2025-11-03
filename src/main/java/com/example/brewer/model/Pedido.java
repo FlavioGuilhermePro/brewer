@@ -35,7 +35,7 @@ public class Pedido {
     private Cliente cliente;
 
     @NotNull
-    private BigDecimal total;
+    private double total;
 
     private String status;
 
