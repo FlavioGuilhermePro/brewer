@@ -29,11 +29,13 @@
     <main class="content-area">
         <div class="page-header">
             <h1>Pedido #<span th:text="${pedido.id}">123</span></h1>
-            <p>Cliente: <span th:text="${pedido.cliente.nome}">Nome do Cliente</span></p>
-            <p>Total: R$ <span th:text="${#numbers.formatDecimal(pedido.total, 1, 'COMMA', 2, 'POINT')}">0,00</span></p>
+            <p><strong>Cliente:</strong> <span th:text="${pedido.cliente.nome}">Nome do Cliente</span></p>
+            <p><strong>Data:</strong> <span th:text="${#temporals.format(pedido.dataPedido, 'dd/MM/yyyy')}">01/01/2025</span></p>
+            <p><strong>Total:</strong> R$ <span th:text="${#numbers.formatDecimal(pedido.total, 1, 'COMMA', 2, 'POINT')}">0,00</span></p>
+            <p><strong>Status:</strong> <span th:text="${pedido.status}" style="color: orange; font-weight: bold;">PENDENTE</span></p>
         </div>
 
-        <!-- Mensagens -->
+        <!-- Mensagens (só aparecem quando existem) -->
         <div th:if="${mensagem}" class="alert alert-success">
             <span th:text="${mensagem}">Operação realizada com sucesso!</span>
         </div>
@@ -50,7 +52,7 @@
 
         <!-- Formulário para adicionar item -->
         <div class="card" th:if="${!#lists.isEmpty(cervejas)}">
-            <h2>Adicionar Cerveja</h2>
+            <h2>Adicionar Cerveja ao Pedido</h2>
             <form th:action="@{/pedido/adicionar-item}" method="post">
                 <input type="hidden" name="pedidoId" th:value="${pedido.id}">
 
@@ -60,7 +62,8 @@
                         <option value="">-- Escolha uma cerveja --</option>
                         <option th:each="cerveja : ${cervejas}"
                                 th:value="${cerveja.id}"
-                                th:text="${cerveja.nome + ' - Estoque: ' + cerveja.quantidadeEstoque + ' - R$ ' + #numbers.formatDecimal(cerveja.valorVenda, 1, 'COMMA', 2, 'POINT')}">
+                                th:text="${cerveja.nome + ' - Estoque: ' + cerveja.quantidadeEstoque + ' - R$ ' + #numbers.formatDecimal(cerveja.valorVenda, 1, 'COMMA', 2, 'POINT')}"
+                                th:disabled="${cerveja.quantidadeEstoque == 0}">
                         </option>
                     </select>
                 </div>
@@ -71,22 +74,66 @@
                 </div>
 
                 <button type="submit" class="btn-primary">Adicionar Item</button>
-                <a th:href="@{/pedido/listar}">
-                    <button type="button" class="btn-secondary">Voltar</button>
-                </a>
             </form>
         </div>
 
-        <!-- Resumo do pedido -->
+        <!-- Lista de itens já adicionados -->
+        <div class="card" th:if="${pedido.itens != null and !#lists.isEmpty(pedido.itens)}">
+            <h2>Itens do Pedido</h2>
+            <table>
+                <thead>
+                <tr>
+                    <th>Cerveja</th>
+                    <th>Quantidade</th>
+                    <th>Valor Unitário</th>
+                    <th>Valor Total</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="item : ${pedido.itens}">
+                    <td th:text="${item.cerveja.nome}">Nome da Cerveja</td>
+                    <td th:text="${item.quantidade}">1</td>
+                    <td th:text="'R$ ' + ${#numbers.formatDecimal(item.valorUnitario, 1, 'COMMA', 2, 'POINT')}">R$ 5,00</td>
+                    <td th:text="'R$ ' + ${#numbers.formatDecimal(item.valorTotal, 1, 'COMMA', 2, 'POINT')}">R$ 5,00</td>
+                </tr>
+                </tbody>
+                <tfoot>
+                <tr style="font-weight: bold; background-color: #F5F5F5;">
+                    <td colspan="3" style="text-align: right;">TOTAL DO PEDIDO:</td>
+                    <td th:text="'R$ ' + ${#numbers.formatDecimal(pedido.total, 1, 'COMMA', 2, 'POINT')}">R$ 0,00</td>
+                </tr>
+                </tfoot>
+            </table>
+        </div>
+
+        <!-- Aviso se não tem itens -->
+        <div class="card" th:if="${pedido.itens == null or #lists.isEmpty(pedido.itens)}">
+            <div class="alert alert-warning">
+                <p><strong>📦 Nenhum item adicionado ainda</strong></p>
+                <p>Adicione pelo menos uma cerveja para poder finalizar o pedido.</p>
+            </div>
+        </div>
+
+        <!-- Resumo e botão finalizar -->
         <div class="card">
-            <h2>Resumo do Pedido</h2>
-            <p><strong>Total do Pedido:</strong> R$ <span th:text="${#numbers.formatDecimal(pedido.total, 1, 'COMMA', 2, 'POINT')}">0,00</span></p>
-            <p><strong>Status:</strong> <span th:text="${pedido.status}">PENDENTE</span></p>
+            <h2>Finalizar Pedido</h2>
 
             <form th:action="@{/pedido/finalizar}" method="post" style="margin-top: 15px;">
                 <input type="hidden" name="pedidoId" th:value="${pedido.id}">
-                <button type="submit" class="btn-primary">Finalizar Pedido</button>
+                <button type="submit" class="btn-primary"
+                        th:disabled="${pedido.itens == null or #lists.isEmpty(pedido.itens)}"
+                        onclick="return confirm('Deseja finalizar este pedido? O estoque será atualizado e não será possível adicionar mais itens.')">
+                    Finalizar Pedido
+                </button>
+
+                <a th:href="@{/pedido/listar}">
+                    <button type="button" class="btn-secondary">Voltar para Pedidos</button>
+                </a>
             </form>
+
+            <p th:if="${pedido.itens == null or #lists.isEmpty(pedido.itens)}" style="color: #FF9800; margin-top: 10px;">
+                ⚠️ Adicione pelo menos um item para poder finalizar o pedido.
+            </p>
         </div>
     </main>
 </div>

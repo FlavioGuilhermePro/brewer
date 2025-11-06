@@ -31,10 +31,19 @@
             <h1>Pedidos</h1>
         </div>
 
+        <!-- Mensagens -->
+        <div th:if="${mensagem}" class="alert alert-success">
+            <span th:text="${mensagem}">Operação realizada com sucesso!</span>
+        </div>
+        <div th:if="${erro}" class="alert alert-error">
+            <span th:text="${erro}">Erro na operação!</span>
+        </div>
+
         <div class="card">
             <h2>Lista de Pedidos</h2>
-            <div th:if="${#lists.isEmpty(pedidos)}">
+            <div th:if="${#lists.isEmpty(pedidos)}" class="alert">
                 <p>Nenhum pedido cadastrado ainda.</p>
+                <p>Vá para <a th:href="@{/cliente/listar}">Cadastro de Clientes</a> e clique em "Criar Pedido".</p>
             </div>
             <table th:if="${!#lists.isEmpty(pedidos)}">
                 <thead>
@@ -51,7 +60,8 @@
                 <tr th:each="pedido : ${pedidos}">
                     <td th:text="${pedido.id}">1</td>
                     <td th:text="${pedido.cliente.nome}">João Silva</td>
-                    <td th:text="${#dates.format(pedido.dataPedido, 'dd/MM/yyyy')}">01/01/2025</td>
+                    <!-- CORRIGIDO: LocalDate usa #temporals ao invés de #dates -->
+                    <td th:text="${#temporals.format(pedido.dataPedido, 'dd/MM/yyyy')}">01/01/2025</td>
                     <td th:text="'R$ ' + ${#numbers.formatDecimal(pedido.total, 1, 'COMMA', 2, 'POINT')}">R$ 25,90</td>
                     <td>
                         <span th:text="${pedido.status}"
@@ -63,6 +73,9 @@
                         <a th:if="${pedido.status == 'PENDENTE'}" th:href="@{/pedido/adicionar-itens/{id}(id=${pedido.id})}">
                             <button type="button" class="btn-secondary">Adicionar Itens</button>
                         </a>
+                        <span th:if="${pedido.status == 'CONFIRMADO'}" style="color: #009688; font-weight: bold;">
+                            ✓ Finalizado
+                        </span>
                     </td>
                 </tr>
                 </tbody>

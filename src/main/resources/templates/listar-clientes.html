@@ -86,8 +86,14 @@
                         <td th:text="${cliente.cpf}">123.456.789-00</td>
                         <td th:text="${cliente.endereço}">Rua Exemplo, 123</td>
                         <td>
+                            <!-- ADICIONADO: Botão para criar pedido -->
+                            <form th:action="@{/pedido/criar}" method="post" style="display: inline;">
+                                <input type="hidden" name="clienteId" th:value="${cliente.id}">
+                                <button type="submit" class="btn-primary">Criar Pedido</button>
+                            </form>
+
                             <form th:action="@{/cliente/deletar/{id}(id=${cliente.id})}" method="post" style="display: inline;">
-                                <button type="submit" class="btn-danger"
+                                <button type="submit" class="btn-delete"
                                         onclick="return confirm('Tem certeza que deseja excluir este cliente?')">Excluir</button>
                             </form>
                         </td>

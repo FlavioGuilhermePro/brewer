@@ -11,7 +11,6 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -30,11 +29,11 @@ public class PedidoService {
     @Autowired
     private CervejaService cervejaService;
 
-    public Pedido criarPedido (Long clienteId){
-        Cliente cliente = clienteRepository.findById(clienteId).orElse(null);
-        if(cliente == null){
-            throw new RuntimeException("Cliente não encontrado");
-        }
+    // Cria um pedido novo vazio para um cliente
+    @Transactional
+    public Pedido criarPedido(Long clienteId) {
+        Cliente cliente = clienteRepository.findById(clienteId)
+                .orElseThrow(() -> new RuntimeException("Cliente não encontrado"));
 
         Pedido pedido = new Pedido();
         pedido.setCliente(cliente);
@@ -45,63 +44,77 @@ public class PedidoService {
         return pedidoRepository.save(pedido);
     }
 
-    public void adicionarItem(Long pedidoId, Long cervejaId, Integer quantidade){
-        Pedido pedido = pedidoRepository.findById(pedidoId).orElse(null);
+    // Adiciona um item (cerveja) ao pedido
+    @Transactional
+    public void adicionarItem(Long pedidoId, Long cervejaId, Integer quantidade) {
+        // Busca o pedido
+        Pedido pedido = pedidoRepository.findById(pedidoId)
+                .orElseThrow(() -> new RuntimeException("Pedido não encontrado"));
+
+        // Busca a cerveja
         Cerveja cerveja = cervejaService.buscarPorId(cervejaId);
-        if(pedido == null){
-            throw new RuntimeException("Pedido não encontrado");
-        }
-        if(cerveja.getQuantidadeEstoque() < quantidade){
-            throw new RuntimeException("Estoque insuficiente");
+
+        // Verifica se tem estoque suficiente
+        if (cerveja.getQuantidadeEstoque() < quantidade) {
+            throw new RuntimeException("Estoque insuficiente! Disponível: " + cerveja.getQuantidadeEstoque());
         }
 
-        //Criar novo item
+        // Cria o item do pedido
         ItemPedido item = new ItemPedido();
         item.setPedido(pedido);
         item.setCerveja(cerveja);
         item.setQuantidade(quantidade);
         item.setValorUnitario(cerveja.getValorVenda());
         item.setValorTotal(cerveja.getValorVenda() * quantidade);
+
+        // Salva o item
         itemPedidoRepository.save(item);
 
-        Double totalAtual = pedido.getTotal();
-        Double valorItem = item.getValorTotal();
-        Double novoTotal = (totalAtual != null ? totalAtual : 0.0) + (valorItem != null ? valorItem : 0.0);
-        pedido.setTotal(novoTotal);
+        // Atualiza o total do pedido
+        pedido.setTotal(pedido.getTotal() + item.getValorTotal());
         pedidoRepository.save(pedido);
-
     }
-    // Finalizar pedido (reduz estoque)
+
+    // Finaliza o pedido e reduz o estoque
     @Transactional
     public void finalizarPedido(Long pedidoId) {
-        Pedido pedido = pedidoRepository.findById(pedidoId).orElse(null);
-        if (pedido == null) {
-            throw new RuntimeException("Pedido não encontrado");
+        // Busca o pedido (com os itens já carregados por causa do EAGER)
+        Pedido pedido = pedidoRepository.findById(pedidoId)
+                .orElseThrow(() -> new RuntimeException("Pedido não encontrado"));
+
+        // Verifica se o pedido tem itens
+        if (pedido.getItens() == null || pedido.getItens().isEmpty()) {
+            throw new RuntimeException("Não é possível finalizar um pedido sem itens");
         }
 
-        // Buscar itens do pedido e reduzir estoque
-        List<ItemPedido> itens = itemPedidoRepository.findAll();
-        for (ItemPedido item : itens) {
-            if (item.getPedido().getId().equals(pedidoId)) {
-                Cerveja cerveja = item.getCerveja();
-                int novaQuantidade = cerveja.getQuantidadeEstoque() - item.getQuantidade();
-                cerveja.setQuantidadeEstoque(novaQuantidade);
-                cervejaService.atualizarCerveja(cerveja);
+        // Para cada item, reduz o estoque da cerveja
+        for (ItemPedido item : pedido.getItens()) {
+            Cerveja cerveja = item.getCerveja();
+            int novaQuantidade = cerveja.getQuantidadeEstoque() - item.getQuantidade();
+
+            // Verifica se ainda tem estoque (segurança dupla)
+            if (novaQuantidade < 0) {
+                throw new RuntimeException("Estoque insuficiente para " + cerveja.getNome());
             }
+
+            // Atualiza o estoque
+            cerveja.setQuantidadeEstoque(novaQuantidade);
+            cervejaService.atualizarCerveja(cerveja);
         }
 
-        // Atualizar status do pedido
+        // Muda o status do pedido para CONFIRMADO
         pedido.setStatus("CONFIRMADO");
         pedidoRepository.save(pedido);
     }
 
-    // Listar todos os pedidos
+    // Lista todos os pedidos
     public List<Pedido> listarPedidos() {
         return pedidoRepository.findAll();
     }
 
-    // Buscar pedido por ID
+    // Busca um pedido específico por ID
     public Pedido buscarPorId(Long id) {
-        return pedidoRepository.findById(id).orElse(null);
+        return pedidoRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Pedido não encontrado"));
     }
 }
