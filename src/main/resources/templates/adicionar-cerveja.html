@@ -6,10 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <link rel="stylesheet" th:href="@{/style.css}">
-
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-
-    <script th:src="@{/script.js}"></script>
 </head>
 <body>
 
@@ -22,26 +19,24 @@
 </nav>
 
 <div class="layout-container">
-
     <aside class="sidebar">
         <nav class="sidebar-nav">
             <ul>
                 <li><a th:href="@{/brewer/listar}" class="active">Estoque de Cervejas</a></li>
-                <li><a href="#">Cadastro de Clientes</a></li>
-                <li><a href="#">Relatórios</a></li>
+                <li><a th:href="@{/cliente/listar}">Cadastro de Clientes</a></li>
+                <li><a th:href="@{/pedido/listar}">Gerenciar Pedidos</a></li>
             </ul>
         </nav>
     </aside>
 
     <main class="content-area">
-
         <div class="page-header">
             <h1>Adicionar Cerveja</h1>
         </div>
 
         <div class="card form-card">
             <h2>Dados da Cerveja</h2>
-            <form th:action="@{/brewer/adicionarcerveja}" th:object="${novaCerveja}" method="post" >
+            <form th:action="@{/brewer/adicionarcerveja}" th:object="${novaCerveja}" method="post">
 
                 <div class="form-group">
                     <label>Nome da Cerveja:</label>
@@ -53,6 +48,12 @@
                     <label>SKU:</label>
                     <input type="text" th:field="*{sku}" placeholder="Adicionar o SKU">
                     <span th:if="${#fields.hasErrors('sku')}" th:errors="*{sku}" class="error-message"></span>
+                </div>
+
+                <div class="form-group">
+                    <label>Volume (ml):</label>
+                    <input type="number" step="0.01" th:field="*{volume}" placeholder="Volume (ml)">
+                    <span th:if="${#fields.hasErrors('volume')}" th:errors="*{volume}" class="error-message"></span>
                 </div>
 
                 <div class="form-group">
@@ -76,7 +77,7 @@
         <div class="card filter-card">
             <h2>Buscar Cerveja</h2>
             <form th:action="@{/brewer/listar}" method="get">
-                <input type="text" name="nome" placeholder="Buscar por Nome da Cerveja">
+                <input type="text" name="nome" placeholder="Buscar por Nome da Cerveja" th:value="${nomeBusca}">
                 <button type="submit" class="btn-secondary">Buscar</button>
             </form>
         </div>
@@ -84,13 +85,14 @@
         <div class="card table-card">
             <h2>Estoque Atual</h2>
             <table>
-                <thead border="1">
+                <thead>
                 <tr>
                     <th>SKU</th>
                     <th>Nome</th>
                     <th>Volume</th>
                     <th>Quantidade</th>
                     <th>Valor Venda</th>
+                    <th>Ações</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -99,7 +101,7 @@
                     <td th:text="${cerveja.nome}"></td>
                     <td th:text="${cerveja.volume}"></td>
                     <td th:text="${cerveja.quantidadeEstoque}"></td>
-                    <td th:text="${cerveja.valorVenda}"></td>
+                    <td th:text="${#numbers.formatDecimal(cerveja.valorVenda, 1, 'COMMA', 2, 'POINT')}"></td>
                     <td>
                         <a th:href="@{/brewer/editar/{id}(id=${cerveja.id})}">
                             <button type="button" class="btn-secondary">Editar</button>
@@ -107,9 +109,7 @@
                         <form th:action="@{/brewer/listar/deletar/{id}(id=${cerveja.id})}"
                               method="post"
                               style="display:inline;">
-                            <button type="submit" class="js-delete-btn btn-delete">
-                                Deletar
-                            </button>
+                            <button type="submit" class="btn-delete">Deletar</button>
                         </form>
                     </td>
                 </tr>
@@ -131,8 +131,8 @@
                 </a>
             </div>
         </div>
-
     </main>
 </div>
+
 </body>
 </html>

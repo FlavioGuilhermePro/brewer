@@ -8,26 +8,32 @@ import com.example.brewer.repository.ClienteRepository;
 import com.example.brewer.repository.ItemPedidoRepository;
 import com.example.brewer.repository.PedidoRepository;
 import jakarta.transaction.Transactional;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
-
 @Service
-@RequiredArgsConstructor
 public class PedidoService {
+
+    @Autowired
     private PedidoRepository pedidoRepository;
+
+    @Autowired
     private ItemPedidoRepository itemPedidoRepository;
+
+    @Autowired
     private ClienteRepository clienteRepository;
+
+    @Autowired
     private CervejaService cervejaService;
 
     public Pedido criarPedido (Long clienteId){
         Cliente cliente = clienteRepository.findById(clienteId).orElse(null);
         if(cliente == null){
-            throw new RuntimeException("CLiente não encontrado");
+            throw new RuntimeException("Cliente não encontrado");
         }
 
         Pedido pedido = new Pedido();
@@ -41,8 +47,7 @@ public class PedidoService {
 
     public void adicionarItem(Long pedidoId, Long cervejaId, Integer quantidade){
         Pedido pedido = pedidoRepository.findById(pedidoId).orElse(null);
-        Cerveja cerveja;
-        cerveja = cervejaService.buscarPorId(cervejaId);
+        Cerveja cerveja = cervejaService.buscarPorId(cervejaId);
         if(pedido == null){
             throw new RuntimeException("Pedido não encontrado");
         }

@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Adicionar Itens - Pedido</title>
+    <link rel="stylesheet" th:href="@{/style.css}">
+</head>
+<body>
+
+<nav class="topbar">
+    <a th:href="@{/brewer/listar}" class="topbar-logo">Brewer Admin</a>
+    <div class="topbar-user">
+        <span>Administrador</span>
+        <a th:href="@{/logout}">Sair</a>
+    </div>
+</nav>
+
+<div class="layout-container">
+    <aside class="sidebar">
+        <nav class="sidebar-nav">
+            <ul>
+                <li><a th:href="@{/brewer/listar}">Estoque de Cervejas</a></li>
+                <li><a th:href="@{/cliente/listar}">Cadastro de Clientes</a></li>
+                <li><a th:href="@{/pedido/listar}" class="active">Gerenciar Pedidos</a></li>
+            </ul>
+        </nav>
+    </aside>
+
+    <main class="content-area">
+        <div class="page-header">
+            <h1>Pedido #<span th:text="${pedido.id}">123</span></h1>
+            <p>Cliente: <span th:text="${pedido.cliente.nome}">Nome do Cliente</span></p>
+            <p>Total: R$ <span th:text="${#numbers.formatDecimal(pedido.total, 1, 'COMMA', 2, 'POINT')}">0,00</span></p>
+        </div>
+
+        <!-- Mensagens -->
+        <div th:if="${mensagem}" class="alert alert-success">
+            <span th:text="${mensagem}">Operação realizada com sucesso!</span>
+        </div>
+        <div th:if="${erro}" class="alert alert-error">
+            <span th:text="${erro}">Erro na operação!</span>
+        </div>
+
+        <!-- Verificar se há cervejas disponíveis -->
+        <div th:if="${#lists.isEmpty(cervejas)}" class="alert alert-warning">
+            <p><strong>⚠️ Não há cervejas cadastradas no estoque.</strong></p>
+            <p>Para adicionar itens ao pedido, primeiro cadastre cervejas no sistema.</p>
+            <a th:href="@{/brewer/listar}" class="btn-primary">Cadastrar Cervejas</a>
+        </div>
+
+        <!-- Formulário para adicionar item -->
+        <div class="card" th:if="${!#lists.isEmpty(cervejas)}">
+            <h2>Adicionar Cerveja</h2>
+            <form th:action="@{/pedido/adicionar-item}" method="post">
+                <input type="hidden" name="pedidoId" th:value="${pedido.id}">
+
+                <div class="form-group">
+                    <label>Cerveja:</label>
+                    <select name="cervejaId" required>
+                        <option value="">-- Escolha uma cerveja --</option>
+                        <option th:each="cerveja : ${cervejas}"
+                                th:value="${cerveja.id}"
+                                th:text="${cerveja.nome + ' - Estoque: ' + cerveja.quantidadeEstoque + ' - R$ ' + #numbers.formatDecimal(cerveja.valorVenda, 1, 'COMMA', 2, 'POINT')}">
+                        </option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Quantidade:</label>
+                    <input type="number" name="quantidade" min="1" value="1" required>
+                </div>
+
+                <button type="submit" class="btn-primary">Adicionar Item</button>
+                <a th:href="@{/pedido/listar}">
+                    <button type="button" class="btn-secondary">Voltar</button>
+                </a>
+            </form>
+        </div>
+
+        <!-- Resumo do pedido -->
+        <div class="card">
+            <h2>Resumo do Pedido</h2>
+            <p><strong>Total do Pedido:</strong> R$ <span th:text="${#numbers.formatDecimal(pedido.total, 1, 'COMMA', 2, 'POINT')}">0,00</span></p>
+            <p><strong>Status:</strong> <span th:text="${pedido.status}">PENDENTE</span></p>
+
+            <form th:action="@{/pedido/finalizar}" method="post" style="margin-top: 15px;">
+                <input type="hidden" name="pedidoId" th:value="${pedido.id}">
+                <button type="submit" class="btn-primary">Finalizar Pedido</button>
+            </form>
+        </div>
+    </main>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Listar Pedidos - Brewer</title>
+    <link rel="stylesheet" th:href="@{/style.css}">
+</head>
+<body>
+
+<nav class="topbar">
+    <a th:href="@{/brewer/listar}" class="topbar-logo">Brewer Admin</a>
+    <div class="topbar-user">
+        <span>Administrador</span>
+        <a th:href="@{/logout}">Sair</a>
+    </div>
+</nav>
+
+<div class="layout-container">
+    <aside class="sidebar">
+        <nav class="sidebar-nav">
+            <ul>
+                <li><a th:href="@{/brewer/listar}">Estoque de Cervejas</a></li>
+                <li><a th:href="@{/cliente/listar}">Cadastro de Clientes</a></li>
+                <li><a th:href="@{/pedido/listar}" class="active">Gerenciar Pedidos</a></li>
+            </ul>
+        </nav>
+    </aside>
+
+    <main class="content-area">
+        <div class="page-header">
+            <h1>Pedidos</h1>
+        </div>
+
+        <div class="card">
+            <h2>Lista de Pedidos</h2>
+            <div th:if="${#lists.isEmpty(pedidos)}">
+                <p>Nenhum pedido cadastrado ainda.</p>
+            </div>
+            <table th:if="${!#lists.isEmpty(pedidos)}">
+                <thead>
+                <tr>
+                    <th>Número</th>
+                    <th>Cliente</th>
+                    <th>Data</th>
+                    <th>Total</th>
+                    <th>Status</th>
+                    <th>Ações</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="pedido : ${pedidos}">
+                    <td th:text="${pedido.id}">1</td>
+                    <td th:text="${pedido.cliente.nome}">João Silva</td>
+                    <td th:text="${#dates.format(pedido.dataPedido, 'dd/MM/yyyy')}">01/01/2025</td>
+                    <td th:text="'R$ ' + ${#numbers.formatDecimal(pedido.total, 1, 'COMMA', 2, 'POINT')}">R$ 25,90</td>
+                    <td>
+                        <span th:text="${pedido.status}"
+                              th:style="${pedido.status == 'CONFIRMADO' ? 'color: green; font-weight: bold;' : 'color: orange; font-weight: bold;'}">
+                            PENDENTE
+                        </span>
+                    </td>
+                    <td>
+                        <a th:if="${pedido.status == 'PENDENTE'}" th:href="@{/pedido/adicionar-itens/{id}(id=${pedido.id})}">
+                            <button type="button" class="btn-secondary">Adicionar Itens</button>
+                        </a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
+</div>
+
+</body>
+</html>
