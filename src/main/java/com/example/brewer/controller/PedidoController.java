@@ -26,9 +26,6 @@ public class PedidoController {
             // Cria o pedido vazio
             Pedido pedido = pedidoService.criarPedido(clienteId);
 
-            // NÃO MOSTRAR MENSAGEM AQUI - só redireciona
-            // A mensagem será mostrada apenas quando adicionar um item
-
             // Redireciona para adicionar itens
             return "redirect:/pedido/adicionar-itens/" + pedido.getId();
 
@@ -101,8 +98,8 @@ public class PedidoController {
             Pedido pedido = pedidoService.buscarPorId(id);
 
             // Verifica se o pedido já foi finalizado
-            if ("CONFIRMADO".equals(pedido.getStatus())) {
-                redirectAttributes.addFlashAttribute("erro", "Este pedido já foi finalizado!");
+            if ("CONFIRMADO".equals(pedido.getStatus()) || "EM_TRANSITO".equals(pedido.getStatus()) || "ENTREGUE".equals(pedido.getStatus())) {
+                redirectAttributes.addFlashAttribute("erro", "Este pedido já foi processado!");
                 return "redirect:/pedido/listar";
             }
 
@@ -117,5 +114,78 @@ public class PedidoController {
             redirectAttributes.addFlashAttribute("erro", "Pedido não encontrado!");
             return "redirect:/pedido/listar";
         }
+    }
+
+    // Excluir um pedido
+    @PostMapping("/excluir/{id}")
+    public String excluirPedido(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        try {
+            pedidoService.excluirPedido(id);
+            redirectAttributes.addFlashAttribute("mensagem", "Pedido #" + id + " excluído com sucesso!");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("erro", "Erro ao excluir pedido: " + e.getMessage());
+        }
+        return "redirect:/pedido/listar";
+    }
+
+    // Formulário para editar pedido
+    @GetMapping("/editar/{id}")
+    public String editarPedidoForm(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes) {
+        try {
+            Pedido pedido = pedidoService.buscarPorId(id);
+
+            // Verifica se o pedido já foi processado
+            if ("CONFIRMADO".equals(pedido.getStatus()) || "EM_TRANSITO".equals(pedido.getStatus()) || "ENTREGUE".equals(pedido.getStatus())) {
+                redirectAttributes.addFlashAttribute("erro", "Não é possível editar um pedido que já foi processado!");
+                return "redirect:/pedido/listar";
+            }
+
+            model.addAttribute("pedido", pedido);
+            return "editar-pedido";  // Removido .html
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("erro", "Erro ao carregar pedido: " + e.getMessage());
+            return "redirect:/pedido/listar";
+        }
+    }
+
+    // Atualizar informações do pedido
+    @PostMapping("/atualizar")
+    public String atualizarPedido(@ModelAttribute Pedido pedido, RedirectAttributes redirectAttributes) {
+        try {
+            pedidoService.atualizarPedido(pedido);
+            redirectAttributes.addFlashAttribute("mensagem", "Pedido atualizado com sucesso!");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("erro", "Erro ao atualizar pedido: " + e.getMessage());
+            return "redirect:/pedido/editar/" + pedido.getId();
+        }
+        return "redirect:/pedido/listar";
+    }
+
+    // Atualizar status do pedido
+    @PostMapping("/atualizar-status")
+    public String atualizarStatus(@RequestParam Long pedidoId,
+                                  @RequestParam String status,
+                                  RedirectAttributes redirectAttributes) {
+        try {
+            pedidoService.atualizarStatus(pedidoId, status);
+            redirectAttributes.addFlashAttribute("mensagem", "Status do pedido atualizado para " + status);
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("erro", "Erro ao atualizar status: " + e.getMessage());
+        }
+        return "redirect:/pedido/listar";
+    }
+
+    // Remover item do pedido
+    @PostMapping("/remover-item")
+    public String removerItem(@RequestParam Long pedidoId,
+                              @RequestParam Long itemId,
+                              RedirectAttributes redirectAttributes) {
+        try {
+            pedidoService.removerItem(pedidoId, itemId);
+            redirectAttributes.addFlashAttribute("mensagem", "Item removido com sucesso!");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("erro", "Erro ao remover item: " + e.getMessage());
+        }
+        return "redirect:/pedido/adicionar-itens/" + pedidoId;
     }
 }

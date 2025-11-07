@@ -26,8 +26,12 @@ public class Pedido {
     @Column(name = "data_pedido")
     private LocalDate dataPedido;
 
+    // Removido @NotNull para permitir valores nulos inicialmente
+    @Column(name = "data_entrega")
+    private LocalDate dataEntrega;
+
+    @NotNull
     @ManyToOne
-    @NotNull(message = "O cliente é obrigatório")
     @JoinColumn(name = "cliente_id")
     private Cliente cliente;
 
@@ -36,8 +40,11 @@ public class Pedido {
 
     private String status;
 
+    private String enderecoEntrega;
+
+    private String observacoes;
+
     // CORREÇÃO: fetch = FetchType.EAGER para evitar LazyInitializationException
-    // Isso carrega os itens automaticamente junto com o pedido
     @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     @Builder.Default
     private List<ItemPedido> itens = new ArrayList<>();

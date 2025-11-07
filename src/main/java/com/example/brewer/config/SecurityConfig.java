@@ -20,7 +20,11 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/style.css", "/script.js", "/", "/login", "/js/**", "/css/**", "/images/**").permitAll()
+                        // Permitir acesso a todos os recursos estáticos
+                        .requestMatchers("/css/**", "/js/**", "/images/**", "/fonts/**", "/style.css").permitAll()
+                        // Permitir acesso às páginas públicas
+                        .requestMatchers("/", "/login", "/error").permitAll()
+                        // Exigir autenticação para todas as outras requisições
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form

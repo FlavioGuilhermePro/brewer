@@ -51,6 +51,7 @@
                     <th>Número</th>
                     <th>Cliente</th>
                     <th>Data</th>
+                    <th>Data Entrega</th>
                     <th>Total</th>
                     <th>Status</th>
                     <th>Ações</th>
@@ -60,22 +61,65 @@
                 <tr th:each="pedido : ${pedidos}">
                     <td th:text="${pedido.id}">1</td>
                     <td th:text="${pedido.cliente.nome}">João Silva</td>
-                    <!-- CORRIGIDO: LocalDate usa #temporals ao invés de #dates -->
                     <td th:text="${#temporals.format(pedido.dataPedido, 'dd/MM/yyyy')}">01/01/2025</td>
+                    <td th:text="${pedido.dataEntrega != null ? #temporals.format(pedido.dataEntrega, 'dd/MM/yyyy') : '-'}">-</td>
                     <td th:text="'R$ ' + ${#numbers.formatDecimal(pedido.total, 1, 'COMMA', 2, 'POINT')}">R$ 25,90</td>
                     <td>
                         <span th:text="${pedido.status}"
-                              th:style="${pedido.status == 'CONFIRMADO' ? 'color: green; font-weight: bold;' : 'color: orange; font-weight: bold;'}">
+                              th:style="${pedido.status == 'CONFIRMADO' ? 'color: green; font-weight: bold;' :
+                                          pedido.status == 'EM_TRANSITO' ? 'color: blue; font-weight: bold;' :
+                                          pedido.status == 'ENTREGUE' ? 'color: darkgreen; font-weight: bold;' :
+                                          pedido.status == 'CANCELADO' ? 'color: red; font-weight: bold;' :
+                                          'color: orange; font-weight: bold;'}">
                             PENDENTE
                         </span>
                     </td>
                     <td>
-                        <a th:if="${pedido.status == 'PENDENTE'}" th:href="@{/pedido/adicionar-itens/{id}(id=${pedido.id})}">
-                            <button type="button" class="btn-secondary">Adicionar Itens</button>
-                        </a>
-                        <span th:if="${pedido.status == 'CONFIRMADO'}" style="color: #009688; font-weight: bold;">
-                            ✓ Finalizado
-                        </span>
+                        <!-- Ações para pedidos pendentes -->
+                        <div th:if="${pedido.status == 'PENDENTE'}">
+                            <a th:href="@{/pedido/adicionar-itens/{id}(id=${pedido.id})}">
+                                <button type="button" class="btn-secondary">Adicionar Itens</button>
+                            </a>
+                            <a th:href="@{/pedido/editar/{id}(id=${pedido.id})}">
+                                <button type="button" class="btn-secondary">Editar</button>
+                            </a>
+                            <form th:action="@{/pedido/excluir/{id}(id=${pedido.id})}" method="post" style="display:inline;">
+                                <button type="submit" class="btn-delete" onclick="return confirm('Deseja excluir este pedido?')">Excluir</button>
+                            </form>
+                        </div>
+
+                        <!-- Ações para pedidos confirmados -->
+                        <div th:if="${pedido.status == 'CONFIRMADO'}">
+                            <form th:action="@{/pedido/atualizar-status}" method="post" style="display:inline;">
+                                <input type="hidden" name="pedidoId" th:value="${pedido.id}">
+                                <input type="hidden" name="status" value="EM_TRANSITO">
+                                <button type="submit" class="btn-primary">Em Trânsito</button>
+                            </form>
+                            <form th:action="@{/pedido/atualizar-status}" method="post" style="display:inline;">
+                                <input type="hidden" name="pedidoId" th:value="${pedido.id}">
+                                <input type="hidden" name="status" value="CANCELADO">
+                                <button type="submit" class="btn-danger" onclick="return confirm('Deseja cancelar este pedido? Os itens serão devolvidos ao estoque.')">Cancelar</button>
+                            </form>
+                        </div>
+
+                        <!-- Ações para pedidos em trânsito -->
+                        <div th:if="${pedido.status == 'EM_TRANSITO'}">
+                            <form th:action="@{/pedido/atualizar-status}" method="post" style="display:inline;">
+                                <input type="hidden" name="pedidoId" th:value="${pedido.id}">
+                                <input type="hidden" name="status" value="ENTREGUE">
+                                <button type="submit" class="btn-primary">Entregue</button>
+                            </form>
+                        </div>
+
+                        <!-- Pedidos entregues ou cancelados -->
+                        <div th:if="${pedido.status == 'ENTREGUE' or pedido.status == 'CANCELADO'}">
+                            <span th:if="${pedido.status == 'ENTREGUE'}" style="color: darkgreen; font-weight: bold;">
+                                ✓ Entregue em <span th:text="${#temporals.format(pedido.dataEntrega, 'dd/MM/yyyy')}">01/01/2025</span>
+                            </span>
+                            <span th:if="${pedido.status == 'CANCELADO'}" style="color: red; font-weight: bold;">
+                                ✗ Cancelado
+                            </span>
+                        </div>
                     </td>
                 </tr>
                 </tbody>

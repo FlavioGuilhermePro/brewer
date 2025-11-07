@@ -2,7 +2,7 @@
 <html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Adicionar Itens - Pedido</title>
+    <title>Editar Pedido - Brewer</title>
     <link rel="stylesheet" th:href="@{/style.css}">
 </head>
 <body>
@@ -28,10 +28,9 @@
 
     <main class="content-area">
         <div class="page-header">
-            <h1>Pedido #<span th:text="${pedido.id}">123</span></h1>
+            <h1>Editar Pedido #<span th:text="${pedido.id}">123</span></h1>
             <p><strong>Cliente:</strong> <span th:text="${pedido.cliente.nome}">Nome do Cliente</span></p>
             <p><strong>Data:</strong> <span th:text="${#temporals.format(pedido.dataPedido, 'dd/MM/yyyy')}">01/01/2025</span></p>
-            <p><strong>Total:</strong> R$ <span th:text="${#numbers.formatDecimal(pedido.total, 1, 'COMMA', 2, 'POINT')}">0,00</span></p>
             <p><strong>Status:</strong> <span th:text="${pedido.status}" style="color: orange; font-weight: bold;">PENDENTE</span></p>
         </div>
 
@@ -43,44 +42,30 @@
             <span th:text="${erro}">Erro na operação!</span>
         </div>
 
-        <!-- Verificar se há cervejas disponíveis -->
-        <div th:if="${#lists.isEmpty(cervejas)}" class="alert alert-warning">
-            <p><strong>⚠️ Não há cervejas cadastradas no estoque.</strong></p>
-            <p>Para adicionar itens ao pedido, primeiro cadastre cervejas no sistema.</p>
-            <a th:href="@{/brewer/listar}" class="btn-primary">Cadastrar Cervejas</a>
-        </div>
-
-        <!-- Formulário para adicionar item -->
-        <div class="card" th:if="${!#lists.isEmpty(cervejas)}">
-            <h2>Adicionar Cerveja ao Pedido</h2>
-            <form th:action="@{/pedido/adicionar-item}" method="post">
-                <input type="hidden" name="pedidoId" th:value="${pedido.id}">
+        <!-- Formulário para editar pedido -->
+        <div class="card">
+            <h2>Informações do Pedido</h2>
+            <form th:action="@{/pedido/atualizar}" th:object="${pedido}" method="post">
+                <input type="hidden" th:field="*{id}">
 
                 <div class="form-group">
-                    <label>Cerveja:</label>
-                    <select name="cervejaId" required>
-                        <option value="">-- Escolha uma cerveja --</option>
-                        <option th:each="cerveja : ${cervejas}"
-                                th:value="${cerveja.id}"
-                                th:text="${cerveja.nome + ' - Estoque: ' + cerveja.quantidadeEstoque + ' - R$ ' + #numbers.formatDecimal(cerveja.valorVenda, 1, 'COMMA', 2, 'POINT')}"
-                                th:disabled="${cerveja.quantidadeEstoque == 0}">
-                        </option>
-                    </select>
+                    <label>Endereço de Entrega:</label>
+                    <input type="text" th:field="*{enderecoEntrega}" placeholder="Endereço completo para entrega">
                 </div>
 
                 <div class="form-group">
-                    <label>Quantidade:</label>
-                    <input type="number" name="quantidade" min="1" value="1" required>
+                    <label>Observações:</label>
+                    <textarea th:field="*{observacoes}" rows="4" placeholder="Observações adicionais sobre o pedido"></textarea>
                 </div>
 
-                <button type="submit" class="btn-primary">Adicionar Item</button>
-                <a th:href="@{/pedido/editar/{id}(id=${pedido.id})}">
-                    <button type="button" class="btn-secondary">Editar Informações</button>
+                <button type="submit" class="btn-primary">Salvar Alterações</button>
+                <a th:href="@{/pedido/listar}">
+                    <button type="button" class="btn-secondary">Cancelar</button>
                 </a>
             </form>
         </div>
 
-        <!-- Lista de itens já adicionados -->
+        <!-- Lista de itens do pedido -->
         <div class="card" th:if="${pedido.itens != null and !#lists.isEmpty(pedido.itens)}">
             <h2>Itens do Pedido</h2>
             <table>
@@ -116,36 +101,6 @@
                 </tr>
                 </tfoot>
             </table>
-        </div>
-
-        <!-- Aviso se não tem itens -->
-        <div class="card" th:if="${pedido.itens == null or #lists.isEmpty(pedido.itens)}">
-            <div class="alert alert-warning">
-                <p><strong>📦 Nenhum item adicionado ainda</strong></p>
-                <p>Adicione pelo menos uma cerveja para poder finalizar o pedido.</p>
-            </div>
-        </div>
-
-        <!-- Resumo e botão finalizar -->
-        <div class="card">
-            <h2>Finalizar Pedido</h2>
-
-            <form th:action="@{/pedido/finalizar}" method="post" style="margin-top: 15px;">
-                <input type="hidden" name="pedidoId" th:value="${pedido.id}">
-                <button type="submit" class="btn-primary"
-                        th:disabled="${pedido.itens == null or #lists.isEmpty(pedido.itens)}"
-                        onclick="return confirm('Deseja finalizar este pedido? O estoque será atualizado e não será possível adicionar mais itens.')">
-                    Finalizar Pedido
-                </button>
-
-                <a th:href="@{/pedido/listar}">
-                    <button type="button" class="btn-secondary">Voltar para Pedidos</button>
-                </a>
-            </form>
-
-            <p th:if="${pedido.itens == null or #lists.isEmpty(pedido.itens)}" style="color: #FF9800; margin-top: 10px;">
-                ⚠️ Adicione pelo menos um item para poder finalizar o pedido.
-            </p>
         </div>
     </main>
 </div>

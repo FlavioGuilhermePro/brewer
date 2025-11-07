@@ -117,4 +117,95 @@ public class PedidoService {
         return pedidoRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Pedido não encontrado"));
     }
+
+    // Excluir um pedido
+    @Transactional
+    public void excluirPedido(Long id) {
+        Pedido pedido = buscarPorId(id);
+
+        // Verifica se o pedido já foi confirmado
+        if ("CONFIRMADO".equals(pedido.getStatus()) || "EM_TRANSITO".equals(pedido.getStatus()) || "ENTREGUE".equals(pedido.getStatus())) {
+            throw new RuntimeException("Não é possível excluir um pedido que já foi processado");
+        }
+
+        // Exclui todos os itens do pedido
+        itemPedidoRepository.deleteAll(pedido.getItens());
+
+        // Exclui o pedido
+        pedidoRepository.delete(pedido);
+    }
+
+    // Atualizar status do pedido
+    @Transactional
+    public void atualizarStatus(Long id, String novoStatus) {
+        Pedido pedido = buscarPorId(id);
+
+        // Validação de transição de status
+        if ("PENDENTE".equals(pedido.getStatus()) && !("CONFIRMADO".equals(novoStatus) || "CANCELADO".equals(novoStatus))) {
+            throw new RuntimeException("Status inválido para pedido pendente");
+        }
+
+        if ("CONFIRMADO".equals(pedido.getStatus()) && !("EM_TRANSITO".equals(novoStatus) || "CANCELADO".equals(novoStatus))) {
+            throw new RuntimeException("Status inválido para pedido confirmado");
+        }
+
+        if ("EM_TRANSITO".equals(pedido.getStatus()) && !("ENTREGUE".equals(novoStatus))) {
+            throw new RuntimeException("Status inválido para pedido em trânsito");
+        }
+
+        // Se o pedido foi cancelado após confirmado, devolve os itens ao estoque
+        if ("CANCELADO".equals(novoStatus) && !"PENDENTE".equals(pedido.getStatus())) {
+            for (ItemPedido item : pedido.getItens()) {
+                Cerveja cerveja = item.getCerveja();
+                cerveja.setQuantidadeEstoque(cerveja.getQuantidadeEstoque() + item.getQuantidade());
+                cervejaService.atualizarCerveja(cerveja);
+            }
+        }
+
+        // Define data de entrega se o pedido foi entregue
+        if ("ENTREGUE".equals(novoStatus)) {
+            pedido.setDataEntrega(LocalDate.now());
+        }
+
+        pedido.setStatus(novoStatus);
+        pedidoRepository.save(pedido);
+    }
+
+    // Atualizar informações do pedido
+    @Transactional
+    public void atualizarPedido(Pedido pedido) {
+        Pedido pedidoExistente = buscarPorId(pedido.getId());
+
+        // Verifica se o pedido já foi processado
+        if ("CONFIRMADO".equals(pedidoExistente.getStatus()) || "EM_TRANSITO".equals(pedidoExistente.getStatus()) || "ENTREGUE".equals(pedidoExistente.getStatus())) {
+            throw new RuntimeException("Não é possível editar um pedido que já foi processado");
+        }
+
+        // Atualiza os campos permitidos
+        pedidoExistente.setEnderecoEntrega(pedido.getEnderecoEntrega());
+        pedidoExistente.setObservacoes(pedido.getObservacoes());
+
+        pedidoRepository.save(pedidoExistente);
+    }
+
+    // Remover item do pedido
+    @Transactional
+    public void removerItem(Long pedidoId, Long itemId) {
+        Pedido pedido = buscarPorId(pedidoId);
+
+        // Verifica se o pedido já foi confirmado
+        if ("CONFIRMADO".equals(pedido.getStatus()) || "EM_TRANSITO".equals(pedido.getStatus()) || "ENTREGUE".equals(pedido.getStatus())) {
+            throw new RuntimeException("Não é possível remover itens de um pedido que já foi processado");
+        }
+
+        ItemPedido item = itemPedidoRepository.findById(itemId)
+                .orElseThrow(() -> new RuntimeException("Item não encontrado"));
+
+        // Atualiza o total do pedido
+        pedido.setTotal(pedido.getTotal() - item.getValorTotal());
+        pedidoRepository.save(pedido);
+
+        // Remove o item
+        itemPedidoRepository.delete(item);
+    }
 }
