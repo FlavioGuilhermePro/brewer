@@ -12,4 +12,6 @@
     public interface CervejaRepository extends JpaRepository<Cerveja, Long> {
 
         Page<Cerveja> findByNomeContainingIgnoreCase(String nome, Pageable pageable);
+        // Nova query para encontrar cervejas com estoque baixo
+        List<Cerveja> findByQuantidadeEstoqueLessThan(int quantidade);
     }

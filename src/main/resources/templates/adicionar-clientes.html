@@ -8,10 +8,13 @@
 <body>
 
 <nav class="topbar">
-    <a th:href="@{/brewer/listar}" class="topbar-logo">Brewer Admin</a>
+    <a th:href="@{/dashboard}" class="topbar-logo">
+        <img th:src="@{/images/logo-brewer.png}" alt="Logo Brewer Admin">
+        Brewer Admin
+    </a>
     <div class="topbar-user">
         <span>Administrador</span>
-        <a th:href="@{/logout}">Sair</a>
+        <a th:href="@{/logout}" title="Sair">Sair</a>
     </div>
 </nav>
 
@@ -19,6 +22,7 @@
     <aside class="sidebar">
         <nav class="sidebar-nav">
             <ul>
+                <li><a th:href="@{/dashboard}" class="active">Dashboard</a></li>
                 <li><a th:href="@{/brewer/listar}">Estoque de Cervejas</a></li>
                 <li><a th:href="@{/cliente/listar}">Cadastro de Clientes</a></li>
                 <li><a th:href="@{/pedido/listar}" class="active">Gerenciar Pedidos</a></li>

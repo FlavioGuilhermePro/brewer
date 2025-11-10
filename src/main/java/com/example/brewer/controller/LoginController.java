@@ -12,6 +12,6 @@ public class LoginController {
 
     @GetMapping("/")
     public String home() {
-        return "redirect:/brewer/listar";
+        return "redirect:/dashboard";
     }
 }
