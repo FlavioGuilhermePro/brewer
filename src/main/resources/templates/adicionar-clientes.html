@@ -12,10 +12,12 @@
         <img th:src="@{/images/logo-brewer.png}" alt="Logo Brewer Admin">
         Brewer Admin
     </a>
-    <div class="topbar-user">
-        <span>Administrador</span>
-        <a th:href="@{/logout}" title="Sair">Sair</a>
-    </div>
+    <form th:action="@{/logout}" method="post" style="display: inline;">
+        <button type="submit" class="btn-logout" title="Sair" style="background: none; border: none; color: var(--cor-white); font-size: 0.95em; font-weight: 600; padding: 8px 16px; border-radius: 6px; transition: background-color 0.2s ease-in-out;">
+            Sair
+        </button>
+    </form>
+
 </nav>
 
 <div class="layout-container">

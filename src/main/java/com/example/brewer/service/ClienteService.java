@@ -28,6 +28,10 @@ public class ClienteService {
         clienteRepository.deleteById(id);
     }
 
+    public void atualizarCliente(Cliente cliente) {
+        clienteRepository.save(cliente);
+    }
+
 
 
 }

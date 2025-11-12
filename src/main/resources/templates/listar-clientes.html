@@ -13,10 +13,11 @@
         <img th:src="@{/images/logo-brewer.png}" alt="Logo Brewer Admin">
         Brewer Admin
     </a>
-    <div class="topbar-user">
-        <span>Administrador</span>
-        <a th:href="@{/logout}" title="Sair">Sair</a>
-    </div>
+    <form th:action="@{/logout}" method="post" style="display: inline;">
+        <button type="submit" class="btn-logout" title="Sair" style="background: none; border: none; color: var(--cor-white); font-size: 0.95em; font-weight: 600; padding: 8px 16px; border-radius: 6px; transition: background-color 0.2s ease-in-out;">
+            Sair
+        </button>
+    </form>
 </nav>
 
 <div class="layout-container">
@@ -96,11 +97,17 @@
                                 <button type="submit" class="btn-primary">Criar Pedido</button>
                             </form>
 
+                            <a th:href="@{/cliente/editar/{id}(id=${cliente.id})}">
+                                <button type="button" class="btn-secondary">Editar</button>
+                            </a>
+
                             <form th:action="@{/cliente/deletar/{id}(id=${cliente.id})}" method="post" style="display: inline;">
                                 <button type="submit" class="btn-delete"
                                         onclick="return confirm('Tem certeza que deseja excluir este cliente?')">Excluir</button>
                             </form>
+
                         </td>
+
                     </tr>
                     </tbody>
                 </table>

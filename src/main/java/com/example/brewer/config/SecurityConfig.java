@@ -23,7 +23,7 @@ public class SecurityConfig {
                         // Permitir acesso a todos os recursos estáticos
                         .requestMatchers("/css/**", "/js/**", "/images/**", "/fonts/**", "/style.css").permitAll()
                         // Permitir acesso às páginas públicas
-                        .requestMatchers("/", "/login", "/error").permitAll()
+                        .requestMatchers("/", "/login", "/error", "/login?logout").permitAll() // Adicionado /login?logout
                         // Exigir autenticação para todas as outras requisições
                         .anyRequest().authenticated()
                 )

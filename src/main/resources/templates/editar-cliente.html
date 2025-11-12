@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Editar Cliente - Brewer</title>
+    <link rel="stylesheet" th:href="@{/style.css}">
+</head>
+<body>
+<nav class="topbar">
+    <a th:href="@{/dashboard}" class="topbar-logo">
+        <img th:src="@{/images/logo-brewer.png}" alt="Logo Brewer Admin">
+        Brewer Admin
+    </a>
+    <form th:action="@{/logout}" method="post" style="display: inline;">
+        <button type="submit" class="btn-logout" title="Sair" style="background: none; border: none; color: var(--cor-white); font-size: 0.95em; font-weight: 600; padding: 8px 16px; border-radius: 6px; transition: background-color 0.2s ease-in-out;">
+            Sair
+        </button>
+    </form>
+</nav>
+
+<div class="layout-container">
+    <aside class="sidebar">
+        <nav class="sidebar-nav">
+            <ul>
+                <li><a th:href="@{/dashboard}">Dashboard</a></li>
+                <li><a th:href="@{/brewer/listar}">Estoque de Cervejas</a></li>
+                <li><a th:href="@{/cliente/listar}" class="active">Cadastro de Clientes</a></li>
+                <li><a th:href="@{/pedido/listar}">Gerenciar Pedidos</a></li>
+            </ul>
+        </nav>
+    </aside>
+
+    <main class="content-area">
+        <div class="page-header">
+            <h1>Editar Cliente</h1>
+        </div>
+
+        <!-- Mensagens -->
+        <div th:if="${mensagem}" class="alert alert-success">
+            <span th:text="${mensagem}">Operação realizada com sucesso!</span>
+        </div>
+        <div th:if="${erro}" class="alert alert-error">
+            <span th:text="${erro}">Erro na operação!</span>
+        </div>
+
+        <div class="card form-card">
+            <h2>Dados do Cliente</h2>
+            <form th:action="@{/cliente/atualizar}" th:object="${cliente}" method="post">
+                <input type="hidden" th:field="*{id}">
+
+                <div class="form-group">
+                    <label>Nome:</label>
+                    <input type="text" th:field="*{nome}" required>
+                    <span th:if="${#fields.hasErrors('nome')}" th:errors="*{nome}" class="error-message"></span>
+                </div>
+                <div class="form-group">
+                    <label>CPF:</label>
+                    <input type="text" th:field="*{cpf}" required>
+                    <span th:if="${#fields.hasErrors('cpf')}" th:errors="*{cpf}" class="error-message"></span>
+                </div>
+                <div class="form-group">
+                    <label>Endereço:</label>
+                    <input type="text" th:field="*{endereço}" required>
+                    <span th:if="${#fields.hasErrors('endereço')}" th:errors="*{endereço}" class="error-message"></span>
+                </div>
+
+                <button type="submit" class="btn-primary">Salvar Alterações</button>
+                <a th:href="@{/cliente/listar}">
+                    <button type="button" class="btn-secondary">Cancelar</button>
+                </a>
+            </form>
+        </div>
+    </main>
+</div>
+</body>
+</html>

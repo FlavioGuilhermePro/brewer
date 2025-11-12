@@ -21,31 +21,27 @@ import java.util.List;
 public class CervejaController {
     private final CervejaService cervejaService;
 
-    // CervejaController.java
 
+    //Formulario de Adição - Utilizamos metodo Post para adicionar cerveja no banco de dados
     @PostMapping("/adicionarcerveja")
     public String adicionarCerveja(
+            //nova cervja é objeto de adição
             @Valid @ModelAttribute("novaCerveja") Cerveja cerveja,
             BindingResult result,
             Model model,
-            // Adiciona o Pageable, mas com PageableDefault para listar a primeira página em caso de erro
             @PageableDefault(size = 8, sort = "id") Pageable pageable) {
 
         if (result.hasErrors()) {
-            // CORREÇÃO: Usar o método paginado e adicionar com o nome "pagina"
+
             Page<Cerveja> paginaCervejas = cervejaService.buscarComFiltro(null, pageable);
             model.addAttribute("pagina", paginaCervejas);
 
-            // Também precisamos adicionar "nomeBusca" para evitar erro no rodapé de paginação
+
             model.addAttribute("nomeBusca", "");
 
             return "adicionar-cerveja"; // Retorna para a view para mostrar erros
         }
-
-        // SE CHEGOU AQUI, DEU SUCESSO!
         cervejaService.adicionarCerveja(cerveja);
-
-        // LINHA CRUCIAL FALTANTE: REDIRECIONA PARA O LISTAR
         return "redirect:/brewer/listar";
     }
 
