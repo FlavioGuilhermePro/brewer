@@ -4,16 +4,19 @@
     <meta charset="UTF-8">
     <title>Estoque Brewer - Editar Cerveja</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+    <script src="/script.js"></script>
     <link rel="stylesheet" th:href="@{/style.css}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 </head>
 <body>
 
 <nav class="topbar">
+    <button id="menu-toggle" class="menu-toggle">
+        <i class="fas fa-bars"></i>
+    </button>
     <a th:href="@{/dashboard}" class="topbar-logo">
         <img th:src="@{/images/logo-brewer.png}" alt="Logo Brewer Admin">
-        Brewer Admin
+        Brewer
     </a>
     <form th:action="@{/logout}" method="post" style="display: inline;">
         <button type="submit" class="btn-logout" title="Sair" style="background: none; border: none; color: var(--cor-white); font-size: 0.95em; font-weight: 600; padding: 8px 16px; border-radius: 6px; transition: background-color 0.2s ease-in-out;">

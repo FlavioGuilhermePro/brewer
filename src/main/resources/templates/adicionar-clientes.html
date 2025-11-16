@@ -4,13 +4,17 @@
     <meta charset="UTF-8">
     <title>Adicionar Itens - Pedido</title>
     <link rel="stylesheet" th:href="@{/style.css}">
+    <script src="/script.js"></script>
 </head>
 <body>
 
 <nav class="topbar">
+    <button id="menu-toggle" class="menu-toggle">
+        <i class="fas fa-bars"></i>
+    </button>
     <a th:href="@{/dashboard}" class="topbar-logo">
         <img th:src="@{/images/logo-brewer.png}" alt="Logo Brewer Admin">
-        Brewer Admin
+        Brewer
     </a>
     <form th:action="@{/logout}" method="post" style="display: inline;">
         <button type="submit" class="btn-logout" title="Sair" style="background: none; border: none; color: var(--cor-white); font-size: 0.95em; font-weight: 600; padding: 8px 16px; border-radius: 6px; transition: background-color 0.2s ease-in-out;">

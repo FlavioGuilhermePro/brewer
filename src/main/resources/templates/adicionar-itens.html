@@ -4,13 +4,17 @@
     <meta charset="UTF-8">
     <title>Adicionar Itens - Pedido</title>
     <link rel="stylesheet" th:href="@{/style.css}">
+    <script src="/script.js"></script>
 </head>
 <body>
 
 <nav class="topbar">
+    <button id="menu-toggle" class="menu-toggle">
+        <i class="fas fa-bars"></i>
+    </button>
     <a th:href="@{/dashboard}" class="topbar-logo">
         <img th:src="@{/images/logo-brewer.png}" alt="Logo Brewer Admin">
-        Brewer Admin
+        Brewer
     </a>
     <form th:action="@{/logout}" method="post" style="display: inline;">
         <button type="submit" class="btn-logout" title="Sair" style="background: none; border: none; color: var(--cor-white); font-size: 0.95em; font-weight: 600; padding: 8px 16px; border-radius: 6px; transition: background-color 0.2s ease-in-out;">
@@ -40,7 +44,6 @@
             <p><strong>Status:</strong> <span th:text="${pedido.status}" style="color: orange; font-weight: bold;">PENDENTE</span></p>
         </div>
 
-        <!-- Mensagens -->
         <div th:if="${mensagem}" class="alert alert-success">
             <span th:text="${mensagem}">Operação realizada com sucesso!</span>
         </div>
@@ -48,14 +51,12 @@
             <span th:text="${erro}">Erro na operação!</span>
         </div>
 
-        <!-- Verificar se há cervejas disponíveis -->
         <div th:if="${#lists.isEmpty(cervejas)}" class="alert alert-warning">
             <p><strong>⚠️ Não há cervejas cadastradas no estoque.</strong></p>
             <p>Para adicionar itens ao pedido, primeiro cadastre cervejas no sistema.</p>
             <a th:href="@{/brewer/listar}" class="btn-primary">Cadastrar Cervejas</a>
         </div>
 
-        <!-- Formulário para adicionar item -->
         <div class="card" th:if="${!#lists.isEmpty(cervejas)}">
             <h2>Adicionar Cerveja ao Pedido</h2>
             <form th:action="@{/pedido/adicionar-item}" method="post">
@@ -85,7 +86,7 @@
             </form>
         </div>
 
-        <!-- Lista de itens já adicionados -->
+        <!-- ===== MUDANÇA: Mostra o nome salvo, não a referência ===== -->
         <div class="card" th:if="${pedido.itens != null and !#lists.isEmpty(pedido.itens)}">
             <h2>Itens do Pedido</h2>
             <table>
@@ -100,7 +101,13 @@
                 </thead>
                 <tbody>
                 <tr th:each="item : ${pedido.itens}">
-                    <td th:text="${item.cerveja.nome}">Nome da Cerveja</td>
+                    <!-- Mostra o nome salvo (histórico), com fallback para a referência -->
+                    <td>
+                        <span th:text="${item.cervejaNome}">Nome da Cerveja</span>
+                        <span th:if="${item.cerveja == null}" style="color: #999; font-size: 0.85em;">
+                            (produto removido do catálogo)
+                        </span>
+                    </td>
                     <td th:text="${item.quantidade}">1</td>
                     <td th:text="'R$ ' + ${#numbers.formatDecimal(item.valorUnitario, 1, 'COMMA', 2, 'POINT')}">R$ 5,00</td>
                     <td th:text="'R$ ' + ${#numbers.formatDecimal(item.valorTotal, 1, 'COMMA', 2, 'POINT')}">R$ 5,00</td>
@@ -123,7 +130,6 @@
             </table>
         </div>
 
-        <!-- Aviso se não tem itens -->
         <div class="card" th:if="${pedido.itens == null or #lists.isEmpty(pedido.itens)}">
             <div class="alert alert-warning">
                 <p><strong>📦 Nenhum item adicionado ainda</strong></p>
@@ -131,7 +137,6 @@
             </div>
         </div>
 
-        <!-- Resumo e botão finalizar -->
         <div class="card">
             <h2>Finalizar Pedido</h2>
 

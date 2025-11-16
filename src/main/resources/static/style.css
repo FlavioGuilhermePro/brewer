@@ -1,16 +1,14 @@
 /* ===== VARIÁVEIS DE COR - NOVA PALETA ===== */
 :root {
-    --cor-primary: #1D2B36;          /* Azul Marinho (mais escuro e sóbrio) */
-    --cor-accent: #FF9800;          /* Dourado/Âmbar */
-    --cor-white: #FFFFFF;           /* Branco */
-    --cor-text-dark: #333333;        /* Cinza Escuro */
-    --cor-background: #F5F5F5;       /* Cinza Claro */
-
-    /* Cores de Suporte e Estados */
-    --cor-primary-hover: #151F28;    /* Azul Marinho mais escuro para hover */
-    --cor-accent-hover: #F57C00;     /* Dourado mais escuro para hover */
-    --cor-text-light: #757575;       /* Cinza para texto secundário */
-    --cor-border: #E0E0E0;           /* Cor para bordas sutis */
+    --cor-primary: #1D2B36;
+    --cor-accent: #FF9800;
+    --cor-white: #FFFFFF;
+    --cor-text-dark: #333333;
+    --cor-background: #F5F5F5;
+    --cor-primary-hover: #151F28;
+    --cor-accent-hover: #F57C00;
+    --cor-text-light: #757575;
+    --cor-border: #E0E0E0;
     --cor-success: #43A047;
     --cor-error: #E53935;
     --cor-warning: #FB8C00;
@@ -39,7 +37,6 @@ body {
 }
 
 /* ===== BARRA SUPERIOR (TOPO) ===== */
-/* CORREÇÃO: Fundo agora é Azul Marinho */
 .topbar {
     background-color: var(--cor-primary);
     height: 70px;
@@ -57,11 +54,11 @@ body {
     display: flex;
     align-items: center;
     text-decoration: none;
-    font-size: 1.5em;
+    font-size: 1.6em;
     font-weight: 700;
-    /* CORREÇÃO: Texto agora é Branco para contraste */
     color: var(--cor-white);
     transition: color 0.2s ease-in-out;
+    letter-spacing: 0.5px;
 }
 
 .topbar-logo:hover {
@@ -70,21 +67,25 @@ body {
 }
 
 .topbar-logo img {
-    height: 45px;
-    margin-right: 15px;
-    border: 3px solid var(--cor-accent);
+    height: 50px;
+    width: 50px;
+    margin-right: 12px;
+    padding: 5px;
+    border: 2px solid var(--cor-accent);
     border-radius: 50%;
-    transition: transform 0.2s ease-in-out;
+    object-fit: contain;
+    transition: all 0.3s ease-in-out;
 }
 
 .topbar-logo:hover img {
-    transform: scale(1.05);
+    transform: scale(1.08) rotate(5deg);
+    border-color: var(--cor-white);
+    filter: brightness(1.2);
 }
 
 .topbar-user {
     display: flex;
     align-items: center;
-    /* CORREÇÃO: Texto agora é Branco para contraste */
     color: var(--cor-white);
     font-size: 0.95em;
 }
@@ -95,7 +96,6 @@ body {
 }
 
 .topbar-user a {
-    /* CORREÇÃO: Texto agora é Branco para contraste */
     color: var(--cor-white);
     font-weight: 600;
     text-decoration: none;
@@ -110,13 +110,34 @@ body {
     text-decoration: none;
 }
 
+/* ===== BOTÃO DE TOGGLE DO MENU ===== */
+.menu-toggle {
+    display: none; /* Esconde no desktop */
+    background: none;
+    border: none;
+    color: var(--cor-white);
+    font-size: 1.8em;
+    cursor: pointer;
+    padding: 10px;
+    transition: all 0.2s ease;
+}
+
+.menu-toggle:hover {
+    color: var(--cor-accent);
+    transform: scale(1.1);
+}
+
+.menu-toggle:active {
+    transform: scale(0.95);
+}
+
 /* ===== BARRA LATERAL (MENU) ===== */
 .sidebar {
     width: 260px;
-    /* ALTERAÇÃO PRINCIPAL: Fundo agora é Azul Marinho */
     background-color: var(--cor-primary);
     flex-shrink: 0;
     box-shadow: 2px 0 8px rgba(0, 0, 0, 0.15);
+    transition: transform 0.3s ease-in-out;
 }
 
 .sidebar-nav {
@@ -142,16 +163,43 @@ body {
 }
 
 .sidebar-nav li a:hover {
-    background-color: rgba(255, 255, 255, 0.08); /* Hover sutil no fundo azul */
+    background-color: rgba(255, 255, 255, 0.08);
     text-decoration: none;
 }
 
-/* AJUSTE: O item ativo agora usa a cor dourada para se destacar no fundo azul */
 .sidebar-nav li a.active {
     background-color: rgba(255, 255, 255, 0.15);
     color: var(--cor-white);
     font-weight: 700;
-    border-left-color: var(--cor-accent); /* Borda ativa com a cor dourada */
+    border-left-color: var(--cor-accent);
+}
+
+/* ===== ÁREA DE CONTEÚDO ===== */
+.content-area {
+    flex-grow: 1;
+    padding: 40px;
+    overflow-x: auto;
+}
+
+.page-header {
+    background-color: var(--cor-white);
+    border-bottom: 1px solid var(--cor-border);
+    margin: -40px -40px 30px -40px;
+    padding: 20px 40px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.page-header h1 {
+    font-size: 2.2em;
+    font-weight: 700;
+    color: var(--cor-primary);
+    margin: 0;
+}
+
+.page-header p {
+    color: var(--cor-text-light);
+    margin: 5px 0 0 0;
+    font-size: 1.05em;
 }
 
 /* ===== CARDS (PAINÉIS DE CONTEÚDO) ===== */
@@ -182,9 +230,23 @@ body {
     font-weight: 500;
 }
 
-.alert-success { background-color: #E8F5E9; color: #2E7D32; border-left-color: var(--cor-success); }
-.alert-error { background-color: #FFEBEE; color: #C62828; border-left-color: var(--cor-error); }
-.alert-warning { background-color: #FFF8E1; color: #F57F17; border-left-color: var(--cor-warning); }
+.alert-success {
+    background-color: #E8F5E9;
+    color: #2E7D32;
+    border-left-color: var(--cor-success);
+}
+
+.alert-error {
+    background-color: #FFEBEE;
+    color: #C62828;
+    border-left-color: var(--cor-error);
+}
+
+.alert-warning {
+    background-color: #FFF8E1;
+    color: #F57F17;
+    border-left-color: var(--cor-warning);
+}
 
 /* ===== FORMULÁRIOS ===== */
 .form-group {
@@ -215,7 +277,7 @@ body {
 .form-group select:focus,
 .form-group textarea:focus {
     outline: none;
-    border-color: var(--cor-accent); /* Acorde usa a cor de destaque dourada */
+    border-color: var(--cor-accent);
     box-shadow: 0 0 0 3px rgba(255, 152, 0, 0.15);
 }
 
@@ -227,7 +289,7 @@ body {
 }
 
 /* ===== BOTÕES ===== */
-.btn-primary, .btn-secondary, .btn-danger {
+.btn-primary, .btn-secondary, .btn-danger, .btn-delete, .btn-logout {
     padding: 12px 24px;
     border: none;
     border-radius: 6px;
@@ -241,9 +303,10 @@ body {
 }
 
 .btn-primary {
-    background-color: var(--cor-accent); /* Botão principal agora usa a cor dourada */
+    background-color: var(--cor-accent);
     color: var(--cor-white);
 }
+
 .btn-primary:hover {
     background-color: var(--cor-accent-hover);
     transform: translateY(-1px);
@@ -254,15 +317,17 @@ body {
     background-color: var(--cor-border);
     color: var(--cor-text-dark);
 }
+
 .btn-secondary:hover {
     background-color: #D0D0D0;
 }
 
-.btn-danger {
+.btn-danger, .btn-delete {
     background-color: var(--cor-error);
     color: var(--cor-white);
 }
-.btn-danger:hover {
+
+.btn-danger:hover, .btn-delete:hover {
     background-color: #C62828;
 }
 
@@ -333,7 +398,6 @@ table td button, table td a {
 }
 
 /* ===== PÁGINA DE LOGIN ===== */
-/* CORREÇÃO: Fundo agora é Azul Marinho */
 body.login-page-body {
     background-color: var(--cor-primary);
     display: flex;
@@ -363,69 +427,134 @@ body.login-page-body {
     font-size: 0.9em;
     margin-top: 25px;
 }
-/* ===== ÁREA DE CONTEÚDO ===== */
-.content-area {
-    flex-grow: 1;
-    padding: 40px;
-    overflow-x: auto;
+
+/* ===== OVERLAY PARA FECHAR MENU NO MOBILE ===== */
+.sidebar-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+    opacity: 0;
+    transition: opacity 0.3s ease;
 }
 
-.page-header {
-    background-color: var(--cor-white);
-    border-bottom: 1px solid var(--cor-border);
-    margin: -40px -40px 30px -40px; /* Margens negativas para o header "vazar" e se alinhar */
-    padding: 20px 40px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+.sidebar-overlay.active {
+    display: block;
+    opacity: 1;
 }
 
-.page-header h1 {
-    font-size: 2.2em;
-    font-weight: 700;
-    color: var(--cor-primary);
-    margin: 0;
-}
-
-.page-header p {
-    color: var(--cor-text-light);
-    margin: 5px 0 0 0;
-    font-size: 1.05em;
-}
-
-/* ===== RESPONSIVIDADE PARA CELULARES ===== */
+/* ===== RESPONSIVIDADE PARA TABLETS E CELULARES ===== */
 @media (max-width: 768px) {
-    .sidebar {
-        display: none;
+    /* MOSTRA o botão de toggle */
+    .menu-toggle {
+        display: block;
     }
+
+    /* Ajusta o layout para coluna */
+    .layout-container {
+        flex-direction: column;
+    }
+
+    /* Menu lateral fixo e escondido por padrão */
+    .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 100vh;
+        width: 260px;
+        z-index: 1001;
+        transform: translateX(-100%); /* Esconde o menu para a esquerda */
+    }
+
+    /* Menu ativo (visível) */
+    .sidebar.sidebar-active {
+        transform: translateX(0); /* Traz o menu para a tela */
+    }
+
+    /* Conteúdo ocupa toda a largura */
+    .content-area {
+        width: 100%;
+        margin-left: 0;
+        padding: 20px 15px;
+    }
+
+    /* Ajusta o header da página */
+    .page-header {
+        margin: -20px -15px 20px -15px;
+        padding: 15px;
+    }
+
+    .page-header h1 {
+        font-size: 1.6em;
+    }
+
+    /* Ajusta cards */
+    .card {
+        padding: 20px;
+    }
+
+    /* Ajusta tabelas para scroll horizontal */
+    .card {
+        overflow-x: auto;
+    }
+
+    table {
+        min-width: 600px;
+    }
+
+    /* Ajusta grid do dashboard */
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+
+    /* Topbar ajustada */
     .topbar {
         padding: 0 15px;
         height: 60px;
     }
+
+    .topbar-logo {
+        font-size: 1.3em;
+    }
+
     .topbar-logo img {
-        height: 35px;
+        height: 40px;
+        width: 40px;
+        padding: 6px;
         margin-right: 10px;
     }
-    .topbar-logo {
-        font-size: 1.2em;
+
+    /* Botões menores em mobile */
+    .btn-primary, .btn-secondary, .btn-danger, .btn-delete {
+        padding: 10px 16px;
+        font-size: 0.9em;
     }
-    .topbar-user span {
-        display: none;
+
+    /* Formulários */
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+        font-size: 16px; /* Evita zoom no iOS */
     }
-    .content-area {
-        padding: 20px;
+}
+
+/* ===== RESPONSIVIDADE PARA CELULARES PEQUENOS ===== */
+@media (max-width: 480px) {
+    .topbar-logo span {
+        display: none; /* Esconde o texto "Brewer" em telas muito pequenas */
     }
-    .page-header h1 {
-        font-size: 1.8em;
+
+    .sidebar {
+        width: 220px; /* Menu um pouco menor */
     }
-    .card {
-        padding: 20px;
-    }
-    .dashboard-grid {
-        grid-template-columns: 1fr;
-    }
-    table {
-        min-width: 600px;
-        display: block;
-        overflow-x: auto;
-        white-space: nowrap;
+
+    table td, table th {
+        padding: 10px;
+        font-size: 0.9em;
     }
 }
